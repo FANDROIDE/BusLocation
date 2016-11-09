@@ -1,0 +1,31 @@
+Nombre corto: 
+BusLocation
+
+Nombre largo:
+Aplicación que  ayuda a localizar tu transporte en tiempo real.
+
+Objetivo:
+Brindar el servicio de ubicación de transporte público de un área determinada.
+
+Objetivos específicos:
+-Notificar al usuario los transportes públicos cercanos.
+-Mostrar la distancia entre el transporte y la ubicación de usuario.
+-Visualizar en tiempo real la ubicación de los transportes públicos disponibles.
+-Calificar el servicio de transporte público.
+-Mejorara la productividad del transporte público, así como la satisfacción de los usuarios.
+
+Planteamiento del problema:
+Se puede notar que los usuarios invierten mucho tiempo esperando el transporte público que abordarán, de igual forma llegan a desconocer la ubicación exacta del mismo, generando una gran inconformidad.
+
+Justificación:
+Esta aplicación será de gran utilidad para los usuarios gracias a su ubicación exacta y precisa de los transportes públicos, evitando así la pérdida de  tiempo que se pretende estimar.
+
+Estado del arte:
+UBER y Moovit
+
+Desarrolladores:
+Flores Pérez Mario Andrés
+Martínez Santiago Feliciano
+Pérez Hernández Gabriela Ivet
+Ruiz Gonzalez Alexander
+Sánchez Villegas Esteban
