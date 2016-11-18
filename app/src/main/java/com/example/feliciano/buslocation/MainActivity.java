@@ -28,7 +28,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     Button Consultar,ConsultarId,Insertar,Borrar,Actualizar;
 
-
     String IP="http://192.168.1.74:3000";
     String GET=IP+"/chofer";
     String GET_BY_ID=IP+"/";
