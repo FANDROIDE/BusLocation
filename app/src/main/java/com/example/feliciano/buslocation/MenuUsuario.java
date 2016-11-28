@@ -8,6 +8,8 @@ import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -18,8 +20,17 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.CameraUpdate;
+import com.estimote.sdk.Beacon;
+import com.estimote.sdk.BeaconManager;
+import com.estimote.sdk.Region;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class MenuUsuario extends FragmentActivity implements OnMapReadyCallback {
+    private Region beacons = new Region("monitored region", UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"), null, null);
+    private BeaconManager beaconManager;
 
     private GoogleMap mMap;
     private Marker marcador = null;
@@ -33,6 +44,36 @@ public class MenuUsuario extends FragmentActivity implements OnMapReadyCallback 
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         //miUbicacion();
+
+        final EditText texto = (EditText) findViewById(R.id.editText);
+        beaconManager = new BeaconManager(getApplicationContext());
+        beaconManager.setBackgroundScanPeriod(TimeUnit.SECONDS.toMillis(1), 0);
+        beaconManager.setMonitoringListener(new BeaconManager.MonitoringListener() {
+            @Override
+            public void onEnteredRegion(Region region, List<Beacon> list) {
+                /*for(int i = 0; i < list.size(); i++) {
+                    texto.setText("Beacon UUID: " + list.get(i).getProximityUUID() + " Major:" + list.get(i).getMajor() + " Minor:" + list.get(i).getMinor());
+                }*/
+                //texto.setText("Beacon UUID: " + list.get(0).getProximityUUID() + " Major:" + list.get(0).getMajor() + " Minor:" + list.get(0).getMinor());
+                //texto.setText("Beacon: " + list);
+                Toast.makeText(getApplicationContext(),"Se ha econtrado una poke parada", Toast.LENGTH_LONG).show();
+
+                //System.out.println("Beacon "+list);
+            }
+
+            @Override
+            public void onExitedRegion(Region region) {
+            }
+        });
+        beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
+            @Override
+            public void onServiceReady() {
+                try {
+                    beaconManager.startMonitoring(beacons);
+                } catch (Exception e) {
+                }
+            }
+        });
     }
 
 
