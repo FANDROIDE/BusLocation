@@ -32,7 +32,7 @@ public class MenuUsuario extends FragmentActivity implements OnMapReadyCallback 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        miUbicacion();
+        //miUbicacion();
     }
 
 
@@ -50,9 +50,10 @@ public class MenuUsuario extends FragmentActivity implements OnMapReadyCallback 
         mMap = googleMap;
         // Add a marker in Sydney and move the camera
         //17.085592920059185 - -96.7549830386878
-        LatLng ubicacion = miUbicacion();
-        mMap.addMarker(new MarkerOptions().position(ubicacion).title("Mi ubicacion"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(ubicacion));
+        //LatLng ubicacion = miUbicacion();
+        //mMap.addMarker(new MarkerOptions().position(ubicacion).title("Mi ubicacion"));
+        mMap.addMarker(new MarkerOptions().position(new LatLng(17.08559,-96.75498)).title("Mi ubicacion"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(17.08559,-96.75498)));
         agregarMarcador(39.2334234,-94.2334234);
     }
     public LatLng miUbicacion() {

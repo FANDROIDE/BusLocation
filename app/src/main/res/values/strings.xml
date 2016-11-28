@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">BusLocation</string>
     <string name="title_activity_menu_usuario">Map</string>
+    <string name="title_activity_menu_maps">Map</string>
 </resources>
