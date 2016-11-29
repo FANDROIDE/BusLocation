@@ -102,7 +102,7 @@ public class Inicio extends AppCompatActivity implements View.OnClickListener{
         switch (v.getId()){
             case R.id.buttonChofer:
                 Intent siguiente=new Intent(getApplicationContext(),UsuarioChofer.class);
-                siguiente.putExtra("nombre","ola k ace");
+                siguiente.putExtra("nombre","chofer");
                 startActivity(siguiente);
                 break;
             case R.id.buttonUsuario:

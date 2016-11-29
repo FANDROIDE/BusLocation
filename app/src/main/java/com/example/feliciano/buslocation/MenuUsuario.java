@@ -5,12 +5,18 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -27,8 +33,17 @@ import com.estimote.sdk.Region;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import android.location.Location;
 
-public class MenuUsuario extends FragmentActivity implements OnMapReadyCallback {
+public class MenuUsuario extends FragmentActivity implements OnMapReadyCallback,GoogleApiClient.OnConnectionFailedListener,
+        GoogleApiClient.ConnectionCallbacks {
+    private static final String LOGTAG = "android-localizacion";
+
+    private static final int PETICION_PERMISO_LOCALIZACION = 101;
+
+    private GoogleApiClient apiClient;
+    Location lastLocation;
+
     private Region beacons = new Region("monitored region", UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"), null, null);
     private BeaconManager beaconManager;
 
@@ -56,7 +71,7 @@ public class MenuUsuario extends FragmentActivity implements OnMapReadyCallback 
                 }*/
                 //texto.setText("Beacon UUID: " + list.get(0).getProximityUUID() + " Major:" + list.get(0).getMajor() + " Minor:" + list.get(0).getMinor());
                 //texto.setText("Beacon: " + list);
-                Toast.makeText(getApplicationContext(),"Se ha econtrado una poke parada", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),"Se ha econtrado parada", Toast.LENGTH_LONG).show();
 
                 //System.out.println("Beacon "+list);
             }
@@ -74,6 +89,11 @@ public class MenuUsuario extends FragmentActivity implements OnMapReadyCallback 
                 }
             }
         });
+        apiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, this)
+                .addConnectionCallbacks(this)
+                .addApi(LocationServices.API)
+                .build();
     }
 
 
@@ -93,30 +113,14 @@ public class MenuUsuario extends FragmentActivity implements OnMapReadyCallback 
         //17.085592920059185 - -96.7549830386878
         //LatLng ubicacion = miUbicacion();
         //mMap.addMarker(new MarkerOptions().position(ubicacion).title("Mi ubicacion"));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(ubicacion));
         mMap.addMarker(new MarkerOptions().position(new LatLng(17.08559,-96.75498)).title("Mi ubicacion"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(17.08559,-96.75498)));
-        agregarMarcador(39.2334234,-94.2334234);
+        //agregarMarcador(39.2334234,-94.2334234);
     }
     public LatLng miUbicacion() {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[] {
-                        android.Manifest.permission.ACCESS_FINE_LOCATION,
-                        android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                        android.Manifest.permission.INTERNET
-                }, 10);
-                //return;
-            }
-        }
-        else {
-            miUbicacion();
-        }
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        Location location = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
-        System.out.println(location.getLatitude()+" - "+location.getLongitude());
-        return new LatLng(location.getLatitude(),location.getLongitude());
-        //actualizarUbicacion(location);
-        //locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER, 15000, 0, locationListener);
+
+        return new LatLng(lastLocation.getLongitude(),lastLocation.getLatitude());
     }
     public void agregarMarcador(double latitud, double longitude) {
         LatLng coordenadas = new LatLng(latitud, longitude);
@@ -127,5 +131,77 @@ public class MenuUsuario extends FragmentActivity implements OnMapReadyCallback 
         marcador = mMap.addMarker(new MarkerOptions().position(coordenadas).title("Yo").icon(BitmapDescriptorFactory.fromResource(R.drawable.bus2)));
         mMap.animateCamera(miUbicacion);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(coordenadas));
+    }
+
+    private void updateUI(Location loc) {
+        if (loc != null) {
+            //lblLatitud.setText("Latitud: " + String.valueOf(loc.getLatitude()));
+            //lblLongitud.setText("Longitud: " + String.valueOf(loc.getLongitude()));
+            System.out.println("latitud:"+String.valueOf(loc.getLatitude()));
+            System.out.println("longitud:"+String.valueOf(loc.getLongitude()));
+            agregarMarcador(loc.getLatitude(),loc.getLongitude());
+
+        } else {
+            //lblLatitud.setText("Latitud: (desconocida)");
+            //lblLongitud.setText("Longitud: (desconocida)");
+            System.out.println("Latitud y Longitud (desconocida)");
+        }
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        //Conectado correctamente a Google Play Servicio
+        //////////////////
+        if (ActivityCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    PETICION_PERMISO_LOCALIZACION);
+        } else {
+
+            lastLocation =
+                    LocationServices.FusedLocationApi.getLastLocation(apiClient);
+
+            updateUI(lastLocation);
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        //Se ha interrumpido la conexión con Google Play Services
+
+        Log.e(LOGTAG, "Se ha interrumpido la conexión con Google Play Services");
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        //Se ha producido un error que no se puede resolver automáticamente
+        //y la conexión con los Google Play Services no se ha establecido.
+
+        Log.e(LOGTAG, "Error grave al conectar con Google Play Services");
+
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == PETICION_PERMISO_LOCALIZACION) {
+            if (grantResults.length == 1
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                //Permiso concedido
+
+                @SuppressWarnings("MissingPermission")
+                Location lastLocation =
+                        LocationServices.FusedLocationApi.getLastLocation(apiClient);
+
+                updateUI(lastLocation);
+
+            } else {
+                //Permiso denegado:
+                //Deberíamos deshabilitar toda la funcionalidad relativa a la localización.
+
+                Log.e(LOGTAG, "Permiso denegado");
+            }
+        }
     }
 }
