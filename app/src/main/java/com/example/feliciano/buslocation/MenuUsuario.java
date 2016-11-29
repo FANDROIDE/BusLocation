@@ -1,6 +1,8 @@
 package com.example.feliciano.buslocation;
 
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -29,6 +31,8 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
 import com.estimote.sdk.Region;
+import android.app.Notification;
+import android.app.NotificationManager;
 
 import java.util.List;
 import java.util.UUID;
@@ -72,6 +76,7 @@ public class MenuUsuario extends FragmentActivity implements OnMapReadyCallback,
                 //texto.setText("Beacon UUID: " + list.get(0).getProximityUUID() + " Major:" + list.get(0).getMajor() + " Minor:" + list.get(0).getMinor());
                 //texto.setText("Beacon: " + list);
                 Toast.makeText(getApplicationContext(),"Se ha econtrado parada", Toast.LENGTH_LONG).show();
+                showNotification("Se ha detectado una parada de autobus","Espera algo?");
 
                 //System.out.println("Beacon "+list);
             }
@@ -203,5 +208,22 @@ public class MenuUsuario extends FragmentActivity implements OnMapReadyCallback,
                 Log.e(LOGTAG, "Permiso denegado");
             }
         }
+    }
+    public void showNotification(String title, String message) {
+        Intent notifyIntent = new Intent(this, MainActivity.class);
+        notifyIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivities(this, 0,
+                new Intent[]{notifyIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
+        Notification notification = new Notification.Builder(this)
+                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
+                .build();
+        notification.defaults |= Notification.DEFAULT_SOUND;
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1, notification);
     }
 }

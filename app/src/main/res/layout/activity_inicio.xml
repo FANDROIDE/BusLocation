@@ -9,27 +9,20 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.feliciano.buslocation.Inicio">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Chofer"
-        android:id="@+id/buttonChofer"
-        android:layout_above="@+id/buttonUsuario"
-        android:layout_alignLeft="@+id/buttonUsuario"
-        android:layout_alignStart="@+id/buttonUsuario" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Usuario"
-        android:id="@+id/buttonUsuario"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
 
     <com.twitter.sdk.android.core.identity.TwitterLoginButton
         android:id="@+id/twitter_login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"/>
+
+    <com.facebook.login.widget.LoginButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/facebook_login_button"
+        android:layout_above="@+id/twitter_login_button"
+        android:layout_marginBottom="35dp"
+        android:layout_alignEnd="@+id/twitter_login_button"
+        android:layout_alignStart="@+id/twitter_login_button" />
 
 </RelativeLayout>

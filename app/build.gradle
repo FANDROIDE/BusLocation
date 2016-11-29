@@ -46,4 +46,5 @@ dependencies {
     compile 'junit:junit:4.12'
     testCompile 'junit:junit:4.12'
     compile 'com.estimote:sdk:0.11.1@aar'
+    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
 }

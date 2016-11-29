@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,7 +29,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     Button Consultar,ConsultarId,Insertar,Borrar,Actualizar;
 
-    String IP="http://192.168.1.74:3000";
+    String IP="http://192.168.43.221:3000";
     String GET=IP+"/chofer";
     String GET_BY_ID=IP+"/";
     String INSERT=IP+"/";
@@ -97,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         protected void onPostExecute(String s) {
             System.out.println(s);
             //super.onPostExecute(s);
+            Toast.makeText(getApplicationContext(),s, Toast.LENGTH_LONG).show();
         }
 
         @Override
@@ -181,7 +183,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                //System.out.println(devuelve);
+
                 return devuelve;
+
 
             }
             else if(params[1]=="2"){

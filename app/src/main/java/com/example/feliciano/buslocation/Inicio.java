@@ -9,6 +9,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
@@ -23,13 +28,15 @@ import io.fabric.sdk.android.Fabric;
 ////
 
 public class Inicio extends AppCompatActivity implements View.OnClickListener{
+    //private LoginButton loginBoton;
+    //private CallbackManager callBackManager;
 
     // Note: Your consumer key and secret should be obfuscated in your source code before shipping.
     private static final String TWITTER_KEY = "nLcpEfjKOKCHnx4Ua2SZmfZIY";
     private static final String TWITTER_SECRET = "OuWZIYDYnJUxwumL4mF9KNdSrJUTPCQ715t5sMRNSA8kLGmaPH";
 
 
-    Button bChofer,bUsuario;
+
     private TwitterLoginButton loginButton;
 
 
@@ -39,26 +46,17 @@ public class Inicio extends AppCompatActivity implements View.OnClickListener{
         TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
         Fabric.with(this, new Twitter(authConfig));
         setContentView(R.layout.activity_inicio);
-        bChofer=(Button)findViewById(R.id.buttonChofer);
-        bUsuario=(Button)findViewById(R.id.buttonUsuario);
-        bChofer.setOnClickListener(this);
-        bUsuario.setOnClickListener(this);
-
         ////////////
         loginButton = (TwitterLoginButton) findViewById(R.id.twitter_login_button);
         loginButton.setCallback(new Callback<TwitterSession>() {
             @Override
             public void success(Result<TwitterSession> result) {
-                // The TwitterSession is also available through:
-                // Twitter.getInstance().core.getSessionManager().getActiveSession()
                 TwitterSession session = result.data;
                 // TODO: Remove toast and use the TwitterSession's userID
-                // with your app's user model
                 String msg = "@" + session.getUserName() + " logged in! (#" + session.getUserId() + ")";
                 Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
-                if(session.getUserName().equals("felicianoms543")){
-                    //System.out.println("bienbenido feliciano");
-                    Toast.makeText(getApplicationContext(), "bienvenido feliciano", Toast.LENGTH_LONG).show();
+                if(session.getUserName().equals(session.getUserName())){
+                    Toast.makeText(getApplicationContext(), "bienvenido "+session.getUserName(), Toast.LENGTH_LONG).show();
                     IrUsuario(session.getUserName());
                 }
                 else if(session.getUserName().equals("felicianoms543a")){
@@ -72,10 +70,31 @@ public class Inicio extends AppCompatActivity implements View.OnClickListener{
 
             @Override
             public void failure(TwitterException e) {
-                //Log.d("TwitterKit", "Login with Twitter failure", exception);
                 System.out.println("Login with Twitter failure");
             }
         });
+
+        /////facebook
+
+       // loginBoton=(LoginButton)findViewById(R.id.facebook_login_button);
+        /*loginBoton.registerCallback(callBackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                System.out.println("access");
+            }
+
+            @Override
+            public void onCancel() {
+
+                System.out.println("cancelado");
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                System.out.println("error");
+
+            }
+        });*/
 
     }
     public void IrUsuario(String nombre){
@@ -94,24 +113,12 @@ public class Inicio extends AppCompatActivity implements View.OnClickListener{
         super.onActivityResult(requestCode, resultCode, data);
         // Make sure that the loginButton hears the result from any
         // Activity that it triggered.
+        //callBackManager.onActivityResult(requestCode,resultCode,data);
         loginButton.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.buttonChofer:
-                Intent siguiente=new Intent(getApplicationContext(),UsuarioChofer.class);
-                siguiente.putExtra("nombre","chofer");
-                startActivity(siguiente);
-                break;
-            case R.id.buttonUsuario:
-                Intent siguienteU=new Intent(getApplicationContext(),MenuUsuario.class);
-                startActivity(siguienteU);
-                break;
-            default:
-                break;
-        }
 
     }
 
